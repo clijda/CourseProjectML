@@ -9,7 +9,7 @@ output:
 
 People regularly quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, the goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants to predict the quality of barbell lifts, classified in 5 different ways.
 
-After data cleaning and exploration several models where tested with random forests as the best predicting.
+After data cleaning and exploration several models where tested with random forests as the best predicting (out of sample accuracy: 99.5%).
 
 ##Loading Data and Preprocessing
 
@@ -100,10 +100,11 @@ predTest2<-predict(modelFit2,dataTest[,-53])
 confusionMatrix(predTest2,dataTest$class)
 varImpPlot(modelFit2,sort=TRUE)
 ```
-Very good prediction. Accuracy is very high. 
+
+Very good prediction. Out of sample Accuracy is very high (99.5%). 
 The confusion matrix also keeps most of the values of the diagonal which shows the a good relation between predicted and actual values.
 
-We will use this model for further testing on the test set
+We will use this model for further testing on the test set.
 
 
 #### Outcome of predicting the 'classe' of the test data with random forest
