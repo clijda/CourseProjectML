@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="David Clijsters" />
+
+
+<title>Course Project Machine Learning: Predict quality of barbell lifts</title>
+
+<script src="data:application/x-javascript,%2F%2A%21%20jQuery%20v1%2E11%2E0%20%7C%20%28c%29%202005%2C%202014%20jQuery%20Foundation%2C%20Inc%2E%20%7C%20jquery%2Eorg%2Flicense%20%2A%2F%0A%21function%28a%2Cb%29%7B%22object%22%3D%3Dtypeof%20module%26%26%22object%22%3D%3Dtypeof%20module%2Eexports%3Fmodule%2Eexports%3Da%2Edocument%3Fb%28a%2C%210%29%3Afunction%28a%29%7Bif%28%21a%2Edocument%29throw%20new%20Error%28%22jQuery%20requires%20a%20window%20with%20a%20document%22%29%3Breturn%20b%28a%29%7D%3Ab%28a%29%7D%28%...(line truncated)...
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="data:text/css,%2F%2A%21%0A%20%2A%20Bootstrap%20v2%2E3%2E2%0A%20%2A%0A%20%2A%20Copyright%202013%20Twitter%2C%20Inc%0A%20%2A%20Licensed%20under%20the%20Apache%20License%20v2%2E0%0A%20%2A%20http%3A%2F%2Fwww%2Eapache%2Eorg%2Flicenses%2FLICENSE%2D2%2E0%0A%20%2A%0A%20%2A%20Designed%20and%20built%20with%20all%20the%20love%20in%20the%20world%20by%20%40mdo%20and%20%40fat%2E%0A%20%2A%2F%2Eclearfix%7B%2Azoom%3A1%7D%2Eclearfix%3Abefore%2C%2Eclearfix%3Aafter%7Bdisplay%3Atable%3Bline%2Dheight%3A0%3Bcontent%3A...(line truncated)...
+<link href="data:text/css,%2F%2A%21%0A%20%2A%20Bootstrap%20Responsive%20v2%2E3%2E2%0A%20%2A%0A%20%2A%20Copyright%202013%20Twitter%2C%20Inc%0A%20%2A%20Licensed%20under%20the%20Apache%20License%20v2%2E0%0A%20%2A%20http%3A%2F%2Fwww%2Eapache%2Eorg%2Flicenses%2FLICENSE%2D2%2E0%0A%20%2A%0A%20%2A%20Designed%20and%20built%20with%20all%20the%20love%20in%20the%20world%20by%20%40mdo%20and%20%40fat%2E%0A%20%2A%2F%2Eclearfix%7B%2Azoom%3A1%7D%2Eclearfix%3Abefore%2C%2Eclearfix%3Aafter%7Bdisplay%3Atable%3Bline%2Dheight%3A0...(line truncated)...
+<script src="data:application/x-javascript,%2F%2A%21%0A%2A%20Bootstrap%2Ejs%20by%20%40fat%20%26%20%40mdo%0A%2A%20Copyright%202013%20Twitter%2C%20Inc%2E%0A%2A%20http%3A%2F%2Fwww%2Eapache%2Eorg%2Flicenses%2FLICENSE%2D2%2E0%2Etxt%0A%2A%2F%0A%21function%28e%29%7B%22use%20strict%22%3Be%28function%28%29%7Be%2Esupport%2Etransition%3Dfunction%28%29%7Bvar%20e%3Dfunction%28%29%7Bvar%20e%3Ddocument%2EcreateElement%28%22bootstrap%22%29%2Ct%3D%7BWebkitTransition%3A%22webkitTransitionEnd%22%2CMozTransition%3A%22transitio...(line truncated)...
+
+<style type="text/css">code{white-space: pre;}</style>
+<link href="data:text/css,pre%20%2Eoperator%2C%0Apre%20%2Eparen%20%7B%0A%20color%3A%20rgb%28104%2C%20118%2C%20135%29%0A%7D%0A%0Apre%20%2Eliteral%20%7B%0A%20color%3A%20%23990073%0A%7D%0A%0Apre%20%2Enumber%20%7B%0A%20color%3A%20%23099%3B%0A%7D%0A%0Apre%20%2Ecomment%20%7B%0A%20color%3A%20%23998%3B%0A%20font%2Dstyle%3A%20italic%0A%7D%0A%0Apre%20%2Ekeyword%20%7B%0A%20color%3A%20%23900%3B%0A%20font%2Dweight%3A%20bold%0A%7D%0A%0Apre%20%2Eidentifier%20%7B%0A%20color%3A%20rgb%280%2C%200%2C%200%29%3B%0A%7D%0A%0Apre%2...(line truncated)...
+<script src="data:application/x-javascript,%0Avar%20hljs%3Dnew%20function%28%29%7Bfunction%20m%28p%29%7Breturn%20p%2Ereplace%28%2F%26%2Fgm%2C%22%26amp%3B%22%29%2Ereplace%28%2F%3C%2Fgm%2C%22%26lt%3B%22%29%7Dfunction%20f%28r%2Cq%2Cp%29%7Breturn%20RegExp%28q%2C%22m%22%2B%28r%2EcI%3F%22i%22%3A%22%22%29%2B%28p%3F%22g%22%3A%22%22%29%29%7Dfunction%20b%28r%29%7Bfor%28var%20p%3D0%3Bp%3Cr%2EchildNodes%2Elength%3Bp%2B%2B%29%7Bvar%20q%3Dr%2EchildNodes%5Bp%5D%3Bif%28q%2EnodeName%3D%3D%22CODE%22%29%7Breturn%20q%7Dif%28%2...(line truncated)...
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+</head>
+
+<body>
+
+<style type="text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+<div class="container-fluid main-container">
+
+
+<div id="header">
+<h1 class="title">Course Project Machine Learning: Predict quality of barbell lifts</h1>
+<h4 class="author"><em>David Clijsters</em></h4>
+<h4 class="date"><em>Saturday, August 23, 2014</em></h4>
+</div>
+
+
+<div id="executive-summary" class="section level2">
+<h2>Executive Summary</h2>
+<p>People regularly quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, the goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants to predict the quality of barbell lifts, classified in 5 different ways.</p>
+<p>After data cleaning and exploration several models where tested with random forests as the best predicting.</p>
+</div>
+<div id="loading-data-and-preprocessing" class="section level2">
+<h2>Loading Data and Preprocessing</h2>
+<pre class="r"><code>#download and load training data
+#FileTrain&lt;-&quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv&quot;
+#download.file(FileTrain,&quot;pml-training.csv&quot;,method=&quot;internal&quot;,mode=&quot;wb&quot;)
+train&lt;-read.csv(&quot;pml-training.csv&quot;)
+# download and load testing data
+#FileTest&lt;-&quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv&quot;
+#download.file(FileTest,&quot;pml-testing.csv&quot;,method=&quot;internal&quot;,mode=&quot;wb&quot;)
+test&lt;-read.csv(&quot;pml-testing.csv&quot;,stringsAsFactors=FALSE)
+data&lt;-train[train$new_window==&quot;no&quot;,]
+data&lt;-data[,-c(1:7)] # delete first 7 columns containing no features
+tdc&lt;-grep(&quot;kurtosis_&quot;,names(data))
+tdc&lt;-c(tdc,grep(&quot;skewness_&quot;,names(data)))
+tdc&lt;-c(tdc,grep(&quot;max_&quot;,names(data)))
+tdc&lt;-c(tdc,grep(&quot;min_&quot;,names(data)))
+tdc&lt;-c(tdc,grep(&quot;amplitude_&quot;,names(data)))
+tdc&lt;-c(tdc,grep(&quot;var_&quot;,names(data)))
+tdc&lt;-c(tdc,grep(&quot;avg_&quot;,names(data)))
+tdc&lt;-c(tdc,grep(&quot;stddev_&quot;,names(data)))
+data&lt;-data[,-tdc] # delete all columns that have statistics calculated
+# apply same transformations on test
+test&lt;-test[,-c(1:7)]
+test&lt;-test[,-tdc]</code></pre>
+<p>From the initial training and test dataset several rows and columns were removed: * rows with new_window equal to ‘yes’ are removed since these rows seem to be aggregation rows collecting statistics of a window number * After deleting previous rows a lot of columns (containing the statistics) became obsolute and were removed too. * The first 7 rows contain data which are not relevant in the prediction (names, timestamps,…), so they are deleted too.</p>
+<p>After all these actions the train set (now called data) is reduced from 160 to 53 columns and has 406 rows less.</p>
+<p>The same transformations are executed on test.</p>
+</div>
+<div id="exploratory-data-analysis" class="section level2">
+<h2>Exploratory Data Analysis</h2>
+<p>After the first cleaning a short graphical exploration of the data was done by plotting some variables and coloring them by classe (=outcome) to see if some patterns show up.</p>
+<pre><code>## Loading required package: lattice
+## Loading required package: ggplot2</code></pre>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABUAAAAPACAMAAADDuCPrAAAA/FBMVEUAAAAAAA0AACEAACgAADoAAGYAKJAAMpAAOjoAOmYAOpAAOpwASUkASbYAZAAAZmYAZpAAZp0AZrYAgP8NAAAXAAAgAAAhfNsoOgAxAAAxkNsyUTE6AAA6OgA6Ojo6OpA6ZmY6kJA6kJw6kLY6kLw6kNtRDQBRvP9YAABYZjpmAABmOgBmWABmZgBmZjpmZmZmkJBmtrZmtv+BZgCQOgCQZgCQkNuQ27aQ29uQ2/+c//+dZgC2SQC2ZgC2tma225C2/7a2/9u2///bkDrbtmbb25Db/7bb/9vb////AAD/AP//pQD/tmb/vFH/23v/25D//7b//7z//9v///9+3Oe6AAAACXBIWXMAAB2HAAAdhwGP5fFlAAAgAElEQVR4nOy9CYMtN7ee1QQbcg3UhSMI0wkBwoHgACEHJ+SDN...(line truncated)...
+<div id="model-selection-and-evaluation" class="section level3">
+<h3>Model selection and evaluation</h3>
+<p>Firstly the <strong>data</strong> are split into train (<strong>dataTrain</strong>) and test (<strong>dataTest</strong>) data to test the model accuracy (out of sample error). Cross-validation will be done for the different models based on this split.</p>
+<p>We start with and easy to interpret model.</p>
+<div id="recursive-partitioning-and-regression-trees-rpart" class="section level4">
+<h4>1. Recursive Partitioning and Regression Trees (rpart)</h4>
+<pre class="r"><code>set.seed(1230)
+inTrain&lt;-createDataPartition(data$classe,p=0.7,list=FALSE)
+dataTrain&lt;-data[inTrain,]
+dataTest&lt;-data[-inTrain,]
+# Prediction with the trees
+modFit1&lt;-train(classe~.,method=&quot;rpart&quot;,data=dataTrain)</code></pre>
+<pre><code>## Loading required package: rpart</code></pre>
+<pre class="r"><code>print(modFit1$finalModel)</code></pre>
+<pre><code>## n= 13453 
+## 
+## node), split, n, loss, yval, (yprob)
+##       * denotes terminal node
+## 
+##  1) root 13453 9623 A (0.28 0.19 0.17 0.16 0.18)  
+##    2) roll_belt&lt; 130.5 12327 8506 A (0.31 0.21 0.19 0.18 0.11)  
+##      4) pitch_forearm&lt; -26.45 1179   51 A (0.96 0.043 0 0 0) *
+##      5) pitch_forearm&gt;=-26.45 11148 8455 A (0.24 0.23 0.21 0.2 0.12)  
+##       10) magnet_dumbbell_y&lt; 439.5 9429 6789 A (0.28 0.18 0.24 0.19 0.11)  
+##         20) roll_forearm&lt; 120.5 5819 3448 A (0.41 0.18 0.19 0.17 0.063) *
+##         21) roll_forearm&gt;=120.5 3610 2421 C (0.075 0.18 0.33 0.23 0.18) *
+##       11) magnet_dumbbell_y&gt;=439.5 1719  856 B (0.031 0.5 0.044 0.22 0.2) *
+##    3) roll_belt&gt;=130.5 1126    9 E (0.008 0 0 0 0.99) *</code></pre>
+<pre class="r"><code>library(rattle)</code></pre>
+<pre><code>## Rattle: A free graphical interface for data mining with R.
+## Version 3.1.0 Copyright (c) 2006-2014 Togaware Pty Ltd.
+## Type 'rattle()' to shake, rattle, and roll your data.</code></pre>
+<pre class="r"><code>fancyRpartPlot(modFit1$finalModel)</code></pre>
+<pre><code>## Loading required package: rpart.plot
+## Loading required package: RColorBrewer</code></pre>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABUAAAAPACAMAAADDuCPrAAAChVBMVEX9/v0AAAAAABEAABsAAB0AACsAAC4AADAAADIAADUAADkAADoAAEwAAFMAAFoAAGAAAGUAAGYAGCoAKyoAKzUALDAALEMAMWAAMYYANEwANGwANHQAOFoAOH4AOY8AOpAATkMATlQAWKoAXJIAXWwAXYkAYn4AYp8AZmUAZo8AZrUAZrYbAAAbLAAbbkMbbmUsAAAse84tAAAtNAAtg2wtg6UuAAAuLAAujHYzAAAzOAAzin4zisE5AAA5OQA5PD85gbE5j485j7U5j9o6AAA6ADo6OgA6Ojo6kNtCLABCqGVCqHZQAABQMQBQNABQnO9Qp8BTTgBTxHZcAABcOABcr+BjbhtjxHZkAABkS0plAABltbVltf1mAABmAC5mZjpmZmZmZrZmkJBmpM5mtrZmtttmtv9vMQBvvM5vv...(line truncated)...
+<pre class="r"><code>predTest1&lt;-predict(modFit1,dataTest[,-53])
+# cross-validation
+confusionMatrix(predTest1,dataTest$class)</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    A    B    C    D    E
+##          A 1490  492  464  408  150
+##          B   26  377   33  170  134
+##          C  121  246  508  366  302
+##          D    0    0    0    0    0
+##          E    4    0    0    0  472
+## 
+## Overall Statistics
+##                                         
+##                Accuracy : 0.494         
+##                  95% CI : (0.481, 0.507)
+##     No Information Rate : 0.285         
+##     P-Value [Acc &gt; NIR] : &lt;2e-16        
+##                                         
+##                   Kappa : 0.338         
+##  Mcnemar's Test P-Value : NA            
+## 
+## Statistics by Class:
+## 
+##                      Class: A Class: B Class: C Class: D Class: E
+## Sensitivity             0.908   0.3381   0.5055    0.000   0.4461
+## Specificity             0.633   0.9219   0.7825    1.000   0.9991
+## Pos Pred Value          0.496   0.5095   0.3292      NaN   0.9916
+## Neg Pred Value          0.945   0.8531   0.8822    0.836   0.8892
+## Prevalence              0.285   0.1935   0.1744    0.164   0.1836
+## Detection Rate          0.259   0.0654   0.0881    0.000   0.0819
+## Detection Prevalence    0.521   0.1284   0.2677    0.000   0.0826
+## Balanced Accuracy       0.770   0.6300   0.6440    0.500   0.7226</code></pre>
+<p>The tree plot already shows that “D” is not amongst the outcomes, so the model is not really fitting the data.</p>
+<p>The confusion matrix also shows a lot of bad predictions</p>
+</div>
+<div id="random-forest" class="section level4">
+<h4>Random Forest</h4>
+<p>this model is chosen since it works very well for categorical data.</p>
+<pre class="r"><code>library(randomForest)</code></pre>
+<pre><code>## randomForest 4.6-10
+## Type rfNews() to see new features/changes/bug fixes.</code></pre>
+<pre class="r"><code>modelFit2&lt;-randomForest(x=dataTrain[,-53],y=dataTrain$classe,prox=TRUE)
+modelFit2</code></pre>
+<pre><code>## 
+## Call:
+##  randomForest(x = dataTrain[, -53], y = dataTrain$classe, proximity = TRUE) 
+##                Type of random forest: classification
+##                      Number of trees: 500
+## No. of variables tried at each split: 7
+## 
+##         OOB estimate of  error rate: 0.5%
+## Confusion matrix:
+##      A    B    C    D    E class.error
+## A 3829    1    0    0    0   0.0002611
+## B   12 2587    4    0    0   0.0061468
+## C    0   17 2329    1    0   0.0076694
+## D    0    0   21 2182    0   0.0095325
+## E    0    0    3    8 2459   0.0044534</code></pre>
+<pre class="r"><code>modelFit2$importance[order(modelFit2$importance,decreasing=TRUE),]</code></pre>
+<pre><code>##            roll_belt             yaw_belt        pitch_forearm 
+##               858.78               615.43               539.94 
+##    magnet_dumbbell_z           pitch_belt    magnet_dumbbell_y 
+##               519.97               473.36               468.79 
+##         roll_forearm    magnet_dumbbell_x     accel_dumbbell_y 
+##               414.81               335.58               287.69 
+##         accel_belt_z        roll_dumbbell        magnet_belt_z 
+##               282.04               281.62               266.79 
+##        magnet_belt_y     accel_dumbbell_z      accel_forearm_x 
+##               255.38               228.86               222.50 
+##             roll_arm         gyros_belt_z     magnet_forearm_z 
+##               218.62               214.77               196.58 
+## total_accel_dumbbell         yaw_dumbbell        magnet_belt_x 
+##               178.46               173.21               171.15 
+##         magnet_arm_x              yaw_arm          accel_arm_x 
+##               170.64               167.68               165.65 
+##      accel_forearm_z     gyros_dumbbell_y     accel_dumbbell_x 
+##               163.56               162.24               159.40 
+##     total_accel_belt     magnet_forearm_y         magnet_arm_y 
+##               159.36               158.56               151.14 
+##     magnet_forearm_x         magnet_arm_z          yaw_forearm 
+##               142.92               126.71               120.58 
+##            pitch_arm       pitch_dumbbell          accel_arm_y 
+##               118.95               115.70               108.05 
+##          gyros_arm_y      accel_forearm_y          gyros_arm_x 
+##                97.25                96.18                93.49 
+##     gyros_dumbbell_x      gyros_forearm_y          accel_arm_z 
+##                93.38                89.29                88.90 
+##         accel_belt_y         gyros_belt_y         accel_belt_x 
+##                87.19                84.34                81.21 
+##  total_accel_forearm         gyros_belt_x      total_accel_arm 
+##                76.55                68.90                66.08 
+##      gyros_forearm_z     gyros_dumbbell_z      gyros_forearm_x 
+##                62.10                58.47                55.69 
+##          gyros_arm_z 
+##                40.23</code></pre>
+<pre class="r"><code>predTest2&lt;-predict(modelFit2,dataTest[,-53])
+# cross-validation
+confusionMatrix(predTest2,dataTest$class)</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    A    B    C    D    E
+##          A 1640    3    0    0    0
+##          B    1 1111    7    0    0
+##          C    0    1  996    9    0
+##          D    0    0    2  935    6
+##          E    0    0    0    0 1052
+## 
+## Overall Statistics
+##                                         
+##                Accuracy : 0.995         
+##                  95% CI : (0.993, 0.997)
+##     No Information Rate : 0.285         
+##     P-Value [Acc &gt; NIR] : &lt;2e-16        
+##                                         
+##                   Kappa : 0.994         
+##  Mcnemar's Test P-Value : NA            
+## 
+## Statistics by Class:
+## 
+##                      Class: A Class: B Class: C Class: D Class: E
+## Sensitivity             0.999    0.996    0.991    0.990    0.994
+## Specificity             0.999    0.998    0.998    0.998    1.000
+## Pos Pred Value          0.998    0.993    0.990    0.992    1.000
+## Neg Pred Value          1.000    0.999    0.998    0.998    0.999
+## Prevalence              0.285    0.193    0.174    0.164    0.184
+## Detection Rate          0.285    0.193    0.173    0.162    0.183
+## Detection Prevalence    0.285    0.194    0.175    0.164    0.183
+## Balanced Accuracy       0.999    0.997    0.994    0.994    0.997</code></pre>
+<pre class="r"><code>varImpPlot(modelFit2,sort=TRUE)</code></pre>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABUAAAAPACAMAAADDuCPrAAABoVBMVEX9/v0AAAAAAA0AABcAACAAACgAADEAADkAAEgAAFcAAGUAFwAAF2YAIFEAIHsAKAAAKDkAKEgAKIEAKI8AMY8AOTkAOWUAOWYAOXsAOY8AOpwASEgASUgASWUASbUAWGYAZmUAZoEAZo8AZpwAZrUNAAANUbsXAAAXZtogAAAgIAAgOgAgUbsoAAAoOQAoOgAogf0oj9oxAAAxUTExj48xj7U5AAA5KAA5OQA5Zlc5ZmU5e2Y5e3s5j485j5w5j7U5j7s5j9o5nP1IAABItf1RDQBRMQBXAABXZjlXtf1lAABlOQBlZjllZmVlgWVlj49lnI9ltbVltdpltf1mFwBmOQBmWABmj9pm2/17IAB7OQB72/2BKACBZgCB/v2PKACPMQCPOQCPZgCPjzmPj5yPj9qPnGWPvI+P29qP2...(line truncated)...
+<p>We will use this model for further testing on the test set</p>
+</div>
+<div id="outcome-of-predicting-the-classe-of-the-test-data-with-random-forest" class="section level4">
+<h4>Outcome of predicting the ‘classe’ of the test data with random forest</h4>
+<pre class="r"><code>predTest&lt;-predict(modelFit2,test[,-53])
+predTest</code></pre>
+<pre><code>##  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 
+##  B  A  B  A  A  E  D  B  A  A  B  C  B  A  E  E  A  B  B  B 
+## Levels: A B C D E</code></pre>
+<pre class="r"><code># pml_write_files = function(x){
+#   n = length(x)
+#   for(i in 1:n){
+#     filename = paste0(&quot;problem_id_&quot;,i,&quot;.txt&quot;)
+#     write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+#   }
+# }
+# 
+# pml_write_files(predTest)</code></pre>
+</div>
+</div>
+<div id="acknowledgements" class="section level3">
+<h3>Acknowledgements</h3>
+<p><a href="http://groupware.les.inf.puc-rio.br/har#weight_lifting_exercises">http://groupware.les.inf.puc-rio.br/har#weight_lifting_exercises</a></p>
+</div>
+</div>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+---
+title: 'Course Project Machine Learning: Predict quality of barbell lifts'
+author: "David Clijsters"
+date: "Saturday, August 23, 2014"
+output:
+  html_document: default
+---
+##Executive Summary
+
+People regularly quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, the goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants to predict the quality of barbell lifts, classified in 5 different ways.
+
+After data cleaning and exploration several models where tested with random forests as the best predicting.
+
+##Loading Data and Preprocessing
+
+```{r loadprocessdata}
+#download and load training data
+#FileTrain<-"https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+#download.file(FileTrain,"pml-training.csv",method="internal",mode="wb")
+train<-read.csv("pml-training.csv")
+# download and load testing data
+#FileTest<-"https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+#download.file(FileTest,"pml-testing.csv",method="internal",mode="wb")
+test<-read.csv("pml-testing.csv",stringsAsFactors=FALSE)
+data<-train[train$new_window=="no",]
+data<-data[,-c(1:7)] # delete first 7 columns containing no features
+tdc<-grep("kurtosis_",names(data))
+tdc<-c(tdc,grep("skewness_",names(data)))
+tdc<-c(tdc,grep("max_",names(data)))
+tdc<-c(tdc,grep("min_",names(data)))
+tdc<-c(tdc,grep("amplitude_",names(data)))
+tdc<-c(tdc,grep("var_",names(data)))
+tdc<-c(tdc,grep("avg_",names(data)))
+tdc<-c(tdc,grep("stddev_",names(data)))
+data<-data[,-tdc] # delete all columns that have statistics calculated
+# apply same transformations on test
+test<-test[,-c(1:7)]
+test<-test[,-tdc]
+```
+
+From the initial training and test dataset several rows and columns were removed:
+* rows with new_window equal to 'yes' are removed since these rows seem to be aggregation rows collecting statistics of a window number
+* After deleting previous rows a lot of columns (containing the statistics) became obsolute and were removed too.
+* The first 7 rows contain data which are not relevant in the prediction (names, timestamps,...), so they are deleted too.
+
+After all these actions the train set (now called data) is reduced from 160 to 53 columns and has 406 rows less.
+
+The same transformations are executed on test.
+
+
+##Exploratory Data Analysis
+
+After the first cleaning a short graphical exploration of the data was done by plotting some variables and coloring them by classe (=outcome) to see if some patterns show up.
+
+```{r exploredata, echo=FALSE}
+library(caret)
+featurePlot(x = data[,c("roll_belt","pitch_forearm","yaw_belt", "magnet_dumbbell_z")], y = factor(data$classe), plot="pairs",pch=46,main="Pairs plot of some variables")
+
+```
+
+###Model selection and evaluation
+
+
+Firstly the **data** are split into train (**dataTrain**) and test (**dataTest**) data to test the model accuracy (out of sample error).
+Cross-validation will be done for the different models based on this split.
+
+We start with and easy to interpret model.
+
+#### 1. Recursive Partitioning and Regression Trees (rpart)
+```{r rpart}
+set.seed(1230)
+inTrain<-createDataPartition(data$classe,p=0.7,list=FALSE)
+dataTrain<-data[inTrain,]
+dataTest<-data[-inTrain,]
+# Prediction with the trees
+modFit1<-train(classe~.,method="rpart",data=dataTrain)
+print(modFit1$finalModel)
+library(rattle)
+fancyRpartPlot(modFit1$finalModel)
+predTest1<-predict(modFit1,dataTest[,-53])
+# cross-validation
+confusionMatrix(predTest1,dataTest$class)
+```
+
+The tree plot already shows that "D" is not amongst the outcomes, so the model is not really fitting the data.
+
+The confusion matrix also shows a lot of bad predictions
+
+#### Random Forest
+
+this model is chosen since it works very well for categorical data.
+
+```{r randomforest}
+library(randomForest)
+modelFit2<-randomForest(x=dataTrain[,-53],y=dataTrain$classe,prox=TRUE)
+modelFit2
+modelFit2$importance[order(modelFit2$importance,decreasing=TRUE),]
+predTest2<-predict(modelFit2,dataTest[,-53])
+# cross-validation
+confusionMatrix(predTest2,dataTest$class)
+varImpPlot(modelFit2,sort=TRUE)
+```
+Very good prediction. Accuracy is very high. 
+The confusion matrix also keeps most of the values of the diagonal which shows the a good relation between predicted and actual values.
+
+We will use this model for further testing on the test set
+
+
+#### Outcome of predicting the 'classe' of the test data with random forest
+
+```{r testprediction}
+predTest<-predict(modelFit2,test[,-53])
+predTest
+
+# pml_write_files = function(x){
+#   n = length(x)
+#   for(i in 1:n){
+#     filename = paste0("problem_id_",i,".txt")
+#     write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+#   }
+# }
+# 
+# pml_write_files(predTest)
+```
+
+### Acknowledgements
+<http://groupware.les.inf.puc-rio.br/har#weight_lifting_exercises>
